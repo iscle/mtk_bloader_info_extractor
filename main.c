@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static long read_element(char *bloader_info_start) {
+static long read_element(char *bloader_info_start, char print_type) {
     long cur_pos = 0;
 
     unsigned int sub_version;
@@ -130,42 +130,145 @@ static long read_element(char *bloader_info_start) {
     memcpy(&lpddr3_mode_reg63, bloader_info_start + cur_pos, 4);
     cur_pos += 4;
 
-    printf("type: 0x%X\n", type);
-    printf("emmc_id_len: %d\n", emmc_id_len);
-    printf("fw_id_len: %d\n", fw_id_len);
-    printf("emmc_id: 0x%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X\n",
-           emmc_id[0], emmc_id[1], emmc_id[2], emmc_id[3], emmc_id[4], emmc_id[5], emmc_id[6], emmc_id[7],
-           emmc_id[8], emmc_id[9], emmc_id[10], emmc_id[11], emmc_id[12], emmc_id[13], emmc_id[14], emmc_id[15]);
-    printf("fw_id: 0x%02X%02X%02X%02X%02X%02X%02X%02X\n",
-           fw_id[0], fw_id[1], fw_id[2], fw_id[3], fw_id[4], fw_id[5], fw_id[6], fw_id[7]);
-    printf("emi_cona_val: 0x%08X\n", emi_cona_val);
-    printf("dramc_drvctl0_val: 0x%08X\n", dramc_drvctl0_val);
-    printf("dramc_drvctl1_val: 0x%08X\n", dramc_drvctl1_val);
-    printf("dramc_actim_val: 0x%08X\n", dramc_actim_val);
-    printf("dramc_gddr3ctl1_val: 0x%08X\n", dramc_gddr3ctl1_val);
-    printf("dramc_conf1_val: 0x%08X\n", dramc_conf1_val);
-    printf("dramc_ddr2ctl_val: 0x%08X\n", dramc_ddr2ctl_val);
-    printf("dramc_test2_3_val: 0x%08X\n", dramc_test2_3_val);
-    printf("dramc_conf2_val: 0x%08X\n", dramc_conf2_val);
-    printf("dramc_pd_ctrl_val: 0x%08X\n", dramc_pd_ctrl_val);
-    printf("dramc_padctl3_val: 0x%08X\n", dramc_padctl3_val);
-    printf("dramc_dqodly_val: 0x%08X\n", dramc_dqodly_val);
-    printf("dramc_addr_output_dly: 0x%08X\n", dramc_addr_output_dly);
-    printf("dramc_clk_output_dly: 0x%08X\n", dramc_clk_output_dly);
-    printf("dramc_actim1_val: 0x%08X\n", dramc_actim1_val);
-    printf("dramc_misctl0_val: 0x%08X\n", dramc_misctl0_val);
-    printf("dramc_actim05t_val: 0x%08X\n", dramc_actim05t_val);
-    printf("dram_rank_size: 0x%08X, 0x%08X, 0x%08X, 0x%08X\n",
-           dram_rank_size[0], dram_rank_size[1], dram_rank_size[2], dram_rank_size[3]);
-    //printf("reserved: %d\n", reserved);
-    printf("lpddr3_mode_reg1: 0x%08X\n", lpddr3_mode_reg1);
-    printf("lpddr3_mode_reg2: 0x%08X\n", lpddr3_mode_reg2);
-    printf("lpddr3_mode_reg3: 0x%08X\n", lpddr3_mode_reg3);
-    printf("lpddr3_mode_reg5: 0x%08X\n", lpddr3_mode_reg5);
-    printf("lpddr3_mode_reg10: 0x%08X\n", lpddr3_mode_reg10);
-    printf("lpddr3_mode_reg63: 0x%08X\n", lpddr3_mode_reg63);
+    if (print_type == 1) {
+        printf("type: 0x%X\n", type);
+        if (emmc_id_len > 0) {
+            printf("0x");
+            for (int i = 0; i < emmc_id_len; i++) {
+                printf("%02X", emmc_id[i]);
+            }
+        }
+        printf("\t");
+        if (fw_id_len > 0) {
+            printf("0x");
+            for (int i = 0; i < fw_id_len; i++) {
+                printf("%02X", fw_id[i]);
+            }
+        }
+        printf("\t");
+        printf("\t"); // Nand Page Size (B)
+        printf("0x%08X\t", emi_cona_val);
+        printf("0x%08X\t", dramc_drvctl0_val);
+        printf("0x%08X\t", dramc_drvctl1_val);
+        printf("0x%08X\t", dramc_actim_val);
+        printf("0x%08X\t", dramc_gddr3ctl1_val);
+        printf("0x%08X\t", dramc_conf1_val);
+        printf("0x%08X\t", dramc_ddr2ctl_val);
+        printf("0x%08X\t", dramc_test2_3_val);
+        printf("0x%08X\t", dramc_conf2_val);
+        printf("0x%08X\t", dramc_pd_ctrl_val);
+        printf("0x%08X\t", dramc_padctl3_val);
+        printf("0x%08X\t", dramc_dqodly_val);
+        printf("0x%08X\t", dramc_addr_output_dly);
+        printf("0x%08X\t", dramc_clk_output_dly);
+        printf("0x%08X\t", dramc_actim1_val);
+        printf("0x%08X\t", dramc_misctl0_val);
+        printf("0x%08X\t", dramc_actim05t_val);
+        printf("LPDDR3\t");
+        printf("0x%08X\t", lpddr3_mode_reg1);
+        printf("0x%08X\t", lpddr3_mode_reg2);
+        printf("0x%08X\t", lpddr3_mode_reg3);
+        printf("0x%08X\t", lpddr3_mode_reg5);
+        printf("0x%08X\t", lpddr3_mode_reg10);
+        printf("0x%08X\n", lpddr3_mode_reg63);
+    } else {
+        printf("type: 0x%X\n", type);
+        if (emmc_id_len > 0) {
+            printf("emmc_id: 0x");
+            for (int i = 0; i < emmc_id_len; i++) {
+                printf("%02X", emmc_id[i]);
+            }
+            printf("\n");
+        }
+        if (fw_id_len > 0) {
+            printf("fw_id: 0x");
+            for (int i = 0; i < fw_id_len; i++) {
+                printf("%02X", fw_id[i]);
+            }
+            printf("\n");
+        }
+        printf("emi_cona_val: 0x%08X\n", emi_cona_val);
+        printf("dramc_drvctl0_val: 0x%08X\n", dramc_drvctl0_val);
+        printf("dramc_drvctl1_val: 0x%08X\n", dramc_drvctl1_val);
+        printf("dramc_actim_val: 0x%08X\n", dramc_actim_val);
+        printf("dramc_gddr3ctl1_val: 0x%08X\n", dramc_gddr3ctl1_val);
+        printf("dramc_conf1_val: 0x%08X\n", dramc_conf1_val);
+        printf("dramc_ddr2ctl_val: 0x%08X\n", dramc_ddr2ctl_val);
+        printf("dramc_test2_3_val: 0x%08X\n", dramc_test2_3_val);
+        printf("dramc_conf2_val: 0x%08X\n", dramc_conf2_val);
+        printf("dramc_pd_ctrl_val: 0x%08X\n", dramc_pd_ctrl_val);
+        printf("dramc_padctl3_val: 0x%08X\n", dramc_padctl3_val);
+        printf("dramc_dqodly_val: 0x%08X\n", dramc_dqodly_val);
+        printf("dramc_addr_output_dly: 0x%08X\n", dramc_addr_output_dly);
+        printf("dramc_clk_output_dly: 0x%08X\n", dramc_clk_output_dly);
+        printf("dramc_actim1_val: 0x%08X\n", dramc_actim1_val);
+        printf("dramc_misctl0_val: 0x%08X\n", dramc_misctl0_val);
+        printf("dramc_actim05t_val: 0x%08X\n", dramc_actim05t_val);
+        //printf("dram_rank_size: 0x%08X, 0x%08X, 0x%08X, 0x%08X\n",
+        //       dram_rank_size[0], dram_rank_size[1], dram_rank_size[2], dram_rank_size[3]);
+        //printf("reserved: %d\n", reserved);
+        printf("lpddr3_mode_reg1: 0x%08X\n", lpddr3_mode_reg1);
+        printf("lpddr3_mode_reg2: 0x%08X\n", lpddr3_mode_reg2);
+        printf("lpddr3_mode_reg3: 0x%08X\n", lpddr3_mode_reg3);
+        printf("lpddr3_mode_reg5: 0x%08X\n", lpddr3_mode_reg5);
+        printf("lpddr3_mode_reg10: 0x%08X\n", lpddr3_mode_reg10);
+        printf("lpddr3_mode_reg63: 0x%08X\n", lpddr3_mode_reg63);
+    }
 
     return cur_pos;
+}
+
+static void parse(char *buf, char print_type) {
+    long cur_pos = 0;
+
+    char header[27];
+    memcpy(header, buf + cur_pos, 27);
+    cur_pos += 27;
+
+    char pre_bin[61];
+    memcpy(pre_bin, buf + cur_pos, 61);
+    cur_pos += 61;
+
+    unsigned int hex_1;
+    memcpy(&hex_1, buf + cur_pos, 4);
+    cur_pos += 4;
+
+    unsigned int hex_2;
+    memcpy(&hex_2, buf + cur_pos, 4);
+    cur_pos += 4;
+
+    unsigned int hex_3;
+    memcpy(&hex_3, buf + cur_pos, 4);
+    cur_pos += 4;
+
+    char mtk_bin[8];
+    memcpy(mtk_bin, buf + cur_pos, 8);
+    cur_pos += 8;
+
+    unsigned int total_custem_chips;
+    memcpy(&total_custem_chips, buf + cur_pos, 4);
+    cur_pos += 4;
+
+    printf("header: %s\n", header);
+    printf("pre_bin: %s\n", pre_bin);
+    printf("hex_1: 0x%X\n", hex_1);
+    printf("hex_2: 0x%X\n", hex_2);
+    printf("hex_3: 0x%X\n", hex_3);
+    printf("mtk_bin: %s\n", mtk_bin);
+    printf("total_custem_chips: %d\n\n", total_custem_chips);
+
+    int i;
+    for (i = 0; i < total_custem_chips; i++) {
+        printf("--------Start element %d--------\n", i);
+        cur_pos += read_element(buf + cur_pos, print_type);
+        printf("--------End element %d--------\n\n", i);
+    }
+
+    unsigned int size;
+    memcpy(&size, buf + cur_pos, 4);
+    cur_pos += 4;
+
+    printf("size: %d\n", size);
 }
 
 static long get_file_size(FILE *f) {
@@ -179,16 +282,25 @@ static long get_file_size(FILE *f) {
 }
 
 static void usage(void) {
-    printf("./mtk_bloader_info_extractor <filename>\n");
+    printf("./mtk_bloader_info_extractor [-c] <filename>\n");
+    printf("\t-e: Print in excel format\n");
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
+    if (argc < 2) {
         usage();
         return 1;
     }
 
-    char *filename = argv[1];
+    char print_type = 0;
+
+    for (int i = 1; i < argc - 1; i++) {
+        if (!strcmp(argv[i], "-e")) {
+            print_type = 1;
+        }
+    }
+
+    char *filename = argv[argc - 1];
     printf("Using preloader \"%s\"\n", filename);
 
     FILE *f = fopen(filename, "rb");
@@ -215,65 +327,15 @@ int main(int argc, char *argv[]) {
 
     fclose(f);
 
-    char *bloader_info_start = memmem(buf, file_size, "MTK_BLOADER_INFO_v16", strlen("MTK_BLOADER_INFO_v16"));
+    char *bloader_info_start = memmem(buf, file_size, "MTK_BLOADER_INFO", strlen("MTK_BLOADER_INFO"));
     if (bloader_info_start == NULL) {
-        printf("Error: Could not find MTK_BLOADER_INFO_v16 header!\n");
+        printf("Error: Could not find MTK_BLOADER_INFO header!\n");
         free(buf);
         return 1;
     }
 
-    printf("Found MTK_BLOADER_INFO_v16 header at offset 0x%lX!\n", bloader_info_start - buf);
-
-    long cur_pos = 0;
-
-    char header[27];
-    memcpy(header, bloader_info_start + cur_pos, 27);
-    cur_pos += 27;
-
-    char pre_bin[61];
-    memcpy(pre_bin, bloader_info_start + cur_pos, 61);
-    cur_pos += 61;
-
-    unsigned int hex_1;
-    memcpy(&hex_1, bloader_info_start + cur_pos, 4);
-    cur_pos += 4;
-
-    unsigned int hex_2;
-    memcpy(&hex_2, bloader_info_start + cur_pos, 4);
-    cur_pos += 4;
-
-    unsigned int hex_3;
-    memcpy(&hex_3, bloader_info_start + cur_pos, 4);
-    cur_pos += 4;
-
-    char mtk_bin[8];
-    memcpy(mtk_bin, bloader_info_start + cur_pos, 8);
-    cur_pos += 8;
-
-    unsigned int total_custem_chips;
-    memcpy(&total_custem_chips, bloader_info_start + cur_pos, 4);
-    cur_pos += 4;
-
-    printf("header: %s\n", header);
-    printf("pre_bin: %s\n", pre_bin);
-    printf("hex_1: 0x%X\n", hex_1);
-    printf("hex_2: 0x%X\n", hex_2);
-    printf("hex_3: 0x%X\n", hex_3);
-    printf("mtk_bin: %s\n", mtk_bin);
-    printf("total_custem_chips: %d\n\n", total_custem_chips);
-
-    int i;
-    for (i = 0; i < total_custem_chips; i++) {
-        printf("--------Start element %d--------\n", i);
-        cur_pos += read_element(bloader_info_start + cur_pos);
-        printf("--------End element %d--------\n\n", i);
-    }
-
-    unsigned int size;
-    memcpy(&size, bloader_info_start + cur_pos, 4);
-    cur_pos += 4;
-
-    printf("size: %d\n", size);
+    printf("Found MTK_BLOADER_INFO header at offset 0x%lX!\n", bloader_info_start - buf);
+    parse(bloader_info_start, print_type);
 
     free(buf);
     return 0;
