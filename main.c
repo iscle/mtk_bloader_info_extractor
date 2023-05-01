@@ -282,7 +282,7 @@ static long get_file_size(FILE *f) {
 }
 
 static void usage(void) {
-    printf("./mtk_bloader_info_extractor [-c] <filename>\n");
+    printf("./mtk_bloader_info_extractor [-e] <filename>\n");
     printf("\t-e: Print in excel format\n");
 }
 
